@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--加载本地资源文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!--通过注解装配到容器，扫描需要注解装配的包-->
+    <context:component-scan base-package="cn.itcast.service"/>
+
+    <!--配置SqlSessionFactory-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactory">
+        <!--注入mybatis的全局配置与数据源-->
+        <property name="configLocation" value="classpath:Mybatis/mybatis-config.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置别名包扫描-->
+        <property name="typeAliasesPackage" value="cn.itcast.pojo"/>
+        <!--配置管理映射文件
+            value:在Mybatis下mappers下的多级(0或多个)目录下的所有映射文件进行扫描-->
+        <property name="mapperLocations" value="classpath:Mybatis/mappers/**/*.xml"/>
+    </bean>
+
+    <!--配置数据源-->
+    <bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+        <property name="driverClassName" value="${jdbc.driverClass}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--将userMapper注入容器-->
+    <!--<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+    <!--&lt;!&ndash;注入mapper接口，sqlSessionFactory&ndash;&gt;-->
+    <!--<property name="mapperInterface" value="cn.itcast.mapper.UserMapper"/>-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+    <!--</bean>-->
+
+    <!--配置mapper接口扫描-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--配置mapper接口包所在路径
+            sqlSessionFactory的配置是可选的-->
+        <property name="basePackage" value="cn.itcast.mapper"/>
+    </bean>
+
+    <!--配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--配置事务管理器的通知-->
+    <tx:advice id="txAdvice">
+        <!--配置事务的属性-->
+        <tx:attributes>
+            <!--指定哪些方法使用事务-->
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--配置aop名称空间与约束-->
+    <aop:config>
+        <!--配置aop切入点表达式-->
+        <aop:pointcut id="pt1" expression="execution(* cn.itcast.service.impl.*.*(..))"/>
+        <!--建立事务管理器与切入点表达式的关系
+            作用：使事务对表达式指定的切入点作用-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pt1"/>
+    </aop:config>
+</beans>

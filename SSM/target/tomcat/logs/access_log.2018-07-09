@@ -1,0 +1,2 @@
+0:0:0:0:0:0:0:1 - - [09/Jul/2018:09:11:08 +0800] "GET /user/insert HTTP/1.1" 200 534 http-bio-8080-exec-1 114
+0:0:0:0:0:0:0:1 - - [09/Jul/2018:09:11:12 +0800] "POST /user/addUser HTTP/1.1" 200 - http-bio-8080-exec-3 503

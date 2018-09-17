@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--对UserMapper接口配置映射-->
+<mapper namespace="cn.itcast.mapper.UserMapper">
+    <select id="queryUserById" resultType="User">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="queryUserList" resultType="User">
+        select * from user
+    </select>
+
+    <insert id="addUser">
+        INSERT INTO user (
+        name,
+        birthday
+        )
+        VALUES
+        (
+        #{name},
+        #{birthday}
+        );
+    </insert>
+
+    <delete id="deleteUser">
+        delete from user where id= #{id}
+    </delete>
+</mapper>

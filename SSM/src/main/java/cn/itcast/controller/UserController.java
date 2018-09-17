@@ -22,6 +22,10 @@ import java.util.Map;
 public class UserController {
 
 
+    public void test(){
+
+    }
+
     /**
      * 注入service
      */
